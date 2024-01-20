@@ -1,16 +1,16 @@
-// PRNG with LFSR(Left Feedback Shift Register)
+// PRNG with LFSR(Linear Feedback Shift Register)
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
 // 8-bit LFSR parameters
 #define LFSR_SIZE 8
-#define FEEDBACK_MASK 0b10000001  // Feedback mask, tap positions marked with '1'
+#define FEEDBACK_MASK 0b10000001  // Feedback mask, tap positions marked with '1' (x^8+x^1+1 LFSR)
 
 // Function to generate a random number using 8-bit LFSR
 unsigned char LFSRrandomNumberGenerator(unsigned char* lfsr) {
     // XOR the feedback bits and rotating shift
-    unsigned char feedback = ((*lfsr) & FEEDBACK_MASK) & 1;
+    unsigned char feedback = ((*lfsr) & FEEDBACK_MASK) ^ ((*lfsr) >> (LFSR_SIZE - 1));
     *lfsr >>= 1;
     *lfsr |= (feedback << (LFSR_SIZE - 1));
 
