@@ -10,7 +10,7 @@
 
 // Function to generate a random number using LCG
 // X_(n+1) = (a X_n + c) mod m, (n ≥ 0)
-unsigned int generateRandomNumber(unsigned int* seed) {
+unsigned int LGCRandomNumberGenerator(unsigned int* seed) {
     *seed = (*seed * MULTIPLIER + INCREMENT) % MODULUS;
     return *seed;
 }
@@ -19,11 +19,8 @@ int main() {
     // Seed the generator with the current time
     unsigned int seed = (unsigned int)time(NULL);
 
-    // Generate and print 10 random numbers
-    for (int i = 0; i < 10; ++i) {
-        unsigned int randomNumber = generateRandomNumber(&seed);
-        printf("%u\n", randomNumber);
-    }
+    for (int i = 0; i < 10; ++i)
+        printf("%u\n", (unsigned char)LGCRandomNumberGenerator(&seed));
 
     return 0;
 }
