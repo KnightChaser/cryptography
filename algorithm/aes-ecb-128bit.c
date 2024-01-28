@@ -232,6 +232,7 @@ void aesAddRoundKey(int round) {
 }
 
 // AES Key Expansion procedure
+// Bsaed on the previous aesRoundKey, create keys for every AES round
 void aesKeyExpansion() {
 
     int i;
@@ -254,6 +255,7 @@ void aesKeyExpansion() {
         tempByteArray[3] = aesRoundKey[(i - 1) * 4 + 3];
 
         // Perform operations based on the current round index
+        // if (i mod 4 == 0), then temp = SubWord(RotWord(temp)) XOR aesRoundConstant[i/4];
         if (i % 4 == 0) {
             // RotWord: Perform cyclic movement of bytes in a word
             // SubWord: Substitute each byte with the value from the S-box
@@ -267,6 +269,7 @@ void aesKeyExpansion() {
         }
 
         // Calculate the current round key
+        // Based on the previous AES round key, calculate the current AES round key
         aesRoundKey[i * 4 + 0] = aesRoundKey[(i - 4) * 4 + 0] ^ tempByteArray[0];
         aesRoundKey[i * 4 + 1] = aesRoundKey[(i - 4) * 4 + 1] ^ tempByteArray[1];
         aesRoundKey[i * 4 + 2] = aesRoundKey[(i - 4) * 4 + 2] ^ tempByteArray[2];
