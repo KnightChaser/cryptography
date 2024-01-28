@@ -1,2 +1,4 @@
 # cryptography
-A programmatic resource for cryptography (Gachon CPS + Personal)
+<p align="center">
+    <img src="README_picture.png" width="400px">
+</p>
