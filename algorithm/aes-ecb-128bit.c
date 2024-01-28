@@ -231,84 +231,89 @@ void aesAddRoundKey(int round) {
     }
 }
 
-// Key expansioning for every AES round
+// AES Key Expansion procedure
 void aesKeyExpansion() {
 
-    int i, j;
-    BYTE tempByteArray[4], tempByte;
- 
-    // Save AES key(aesCipherKey) to aesRoundKey
+    int i;
+    BYTE tempByteArray[4];
+
+    // Initialization: Copy the initial key (aesCipherKey) to the first round key
     for (i = 0; i < 4; i++) {
         aesRoundKey[i * 4]     = aesCipherKey[i * 4];
         aesRoundKey[i * 4 + 1] = aesCipherKey[i * 4 + 1];
         aesRoundKey[i * 4 + 2] = aesCipherKey[i * 4 + 2];
         aesRoundKey[i * 4 + 3] = aesCipherKey[i * 4 + 3];
     }
- 
-    // Bsaed on the previous aesRoundKey, create keys for every AES round
+
+    // Key expansion for subsequent rounds
     for (i = 4; i < 44; i++) {
-        
-        // tempByteArray = aesRoundKey[i-1]
+        // Temporarily store the previous round key
         tempByteArray[0] = aesRoundKey[(i - 1) * 4 + 0];
         tempByteArray[1] = aesRoundKey[(i - 1) * 4 + 1];
         tempByteArray[2] = aesRoundKey[(i - 1) * 4 + 2];
         tempByteArray[3] = aesRoundKey[(i - 1) * 4 + 3];
 
-        // if (i mod 4 == 0), then temp = SubWord(RotWord(temp)) XOR aesRoundConstant[i/4];
+        // Perform operations based on the current round index
         if (i % 4 == 0) {
-
-            // RotWord (Cyclic movement word by word)
-            // Change order B0-B1-B2-B3 to B1-B2-B3-B0
-            tempByte         = tempByteArray[0];
-            tempByteArray[0] = tempByteArray[1];
-            tempByteArray[1] = tempByteArray[2];
-            tempByteArray[2] = tempByteArray[3];
-            tempByteArray[3] = tempByte;
- 
-            // Subword (Substitute 4 bytes with AES S-Box)
+            // RotWord: Perform cyclic movement of bytes in a word
+            // SubWord: Substitute each byte with the value from the S-box
             tempByteArray[0] = aesSbox[tempByteArray[0]];
             tempByteArray[1] = aesSbox[tempByteArray[1]];
             tempByteArray[2] = aesSbox[tempByteArray[2]];
             tempByteArray[3] = aesSbox[tempByteArray[3]];
- 
-            tempByteArray[0] = tempByteArray[0] ^ aesRoundConstant[i / 4];
+
+            // XOR the first byte with the round constant
+            tempByteArray[0] ^= aesRoundConstant[i / 4];
         }
 
-        // Based on the previous AES round key, calculate the current AES round key
+        // Calculate the current round key
         aesRoundKey[i * 4 + 0] = aesRoundKey[(i - 4) * 4 + 0] ^ tempByteArray[0];
         aesRoundKey[i * 4 + 1] = aesRoundKey[(i - 4) * 4 + 1] ^ tempByteArray[1];
         aesRoundKey[i * 4 + 2] = aesRoundKey[(i - 4) * 4 + 2] ^ tempByteArray[2];
         aesRoundKey[i * 4 + 3] = aesRoundKey[(i - 4) * 4 + 3] ^ tempByteArray[3];
-        i++;
     }
 }
 
 // AES Encryption procedure with 128-bit length key
 void aes128Encrypt(BYTE* plaintext, BYTE *ciphertext) {
+    // Copy the input plaintext into the aesState matrix
     for(int x = 0; x < 4; x++) {
         for(int y = 0; y < 4; y++) {
             aesState[y][x] = plaintext[x * 4 + y];
         }
     }
 
+    // Initial round key addition
     aesAddRoundKey(0x00);
+
+    // Main encryption rounds
     for(int round = 1; round < NUMBER_OF_ROUND; round++) {
+        // SubBytes: Substitute each byte with the value from the S-box
         aesSubBytes();
+
+        // ShiftRows: Perform cyclic left shifts on each row
         aesShiftRows();
+
+        // MixColumns: Combine bytes of each column using matrix multiplication
         aesMixColumns();
+
+        // AddRoundKey: XOR the state with the round key
         aesAddRoundKey(round);
     }
 
+    // Final round (without MixColumns)
     aesSubBytes();
     aesShiftRows();
-    aesAddRoundKey(NUMBER_OF_ROUND);
-    
+    aesAddRoundKey(NUMBER_OF_ROUND);  // Note: No MixColumns in the final round
+
+    // Copy the final state to the ciphertext
     for(int x = 0; x < 4; x++) {
         for(int y = 0; y < 4; y++) {
             ciphertext[x * 4 + y] = aesState[y][x];
         }
     }
 }
+
 
 // AES Decryption procedure with 128-bit length key
 void aes128Decrypt(BYTE *ciphertext, BYTE *plaintext) {
