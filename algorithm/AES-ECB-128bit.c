@@ -183,9 +183,9 @@ BYTE multiplyInGF(BYTE b, BYTE n) {
 void aesMixColumns() {
 	int i, j, k;
 	BYTE aesMixColumnMatrix[4][4] = {0x2, 0x3, 0x1, 0x1,
-                                     0x1, 0x2, 0x3, 0x1,
-                                     0x1, 0x1, 0x2, 0x3,
-                                     0x3, 0x1, 0x1, 0x2};
+                                     	 0x1, 0x2, 0x3, 0x1,
+                                     	 0x1, 0x1, 0x2, 0x3,
+                                     	 0x3, 0x1, 0x1, 0x2};
 
 	for (i = 0; i < 4; i++) {
 		BYTE tempByte[4] = { 0, };
@@ -232,7 +232,7 @@ void aesAddRoundKey(int round) {
 }
 
 // AES Key Expansion procedure
-// Bsaed on the previous aesRoundKey, create keys for every AES round
+// Based on the previous aesRoundKey, create keys for every AES round
 void aesKeyExpansion() {
 
     int i;
