@@ -46,26 +46,26 @@ func main() {
 	rand.Read(keyEncryptionKeyUserA[:])
 	rand.Read(keyEncryptionKeyUserB[:])
 	rand.Read(kdcSessionKey[:])
-	fmt.Printf("[KDC/UserA] kekUserA                : %v\n", Hexify(keyEncryptionKeyUserA[:]))
-	fmt.Printf("[KDC/UserB] kekUserB                : %v\n", Hexify(keyEncryptionKeyUserB[:]))
-	fmt.Printf("[KDC]       kdcSessionKey           : %v\n", Hexify(kdcSessionKey[:]))
+	fmt.Printf("[KDC ← UserA] kekUserA                : %v\n", Hexify(keyEncryptionKeyUserA[:]))
+	fmt.Printf("[KDC ← UserB] kekUserB                : %v\n", Hexify(keyEncryptionKeyUserB[:]))
+	fmt.Printf("[KDC]         kdcSessionKey           : %v\n", Hexify(kdcSessionKey[:]))
 
 	// Second, we need to encrypt the KDC session key with the key encryption keys of UserA and UserB
 	kekUserAEncryptedKDCSessionKey := EncryptAESCTR(keyEncryptionKeyUserA[:], kdcSessionKey[:])
 	kekUserBEncryptedKDCSessionKey := EncryptAESCTR(keyEncryptionKeyUserB[:], kdcSessionKey[:])
-	fmt.Printf("[KDC/UserA] Encrypted kdcSessionKey : %v\n", Hexify(kekUserAEncryptedKDCSessionKey))
-	fmt.Printf("[KDC/UserB] Encrypted kdcSessionKey : %v\n", Hexify(kekUserBEncryptedKDCSessionKey))
+	fmt.Printf("[KDC → UserA] Encrypted kdcSessionKey : %v\n", Hexify(kekUserAEncryptedKDCSessionKey))
+	fmt.Printf("[KDC → UserB] Encrypted kdcSessionKey : %v\n", Hexify(kekUserBEncryptedKDCSessionKey))
 
 	// Third, each user needs to decrypt the KDC session key with their key encryption keys
 	kekUserADecryptedKDCSessionKey := DecryptAESCTR(keyEncryptionKeyUserA[:], kekUserAEncryptedKDCSessionKey)
 	kekUserBDecryptedKDCSessionKey := DecryptAESCTR(keyEncryptionKeyUserB[:], kekUserBEncryptedKDCSessionKey)
-	fmt.Printf("[UserA]     Decrypted kdcSessionKey : %v\n", Hexify(kekUserADecryptedKDCSessionKey))
-	fmt.Printf("[UserB]     Decrypted kdcSessionKey : %v\n", Hexify(kekUserBDecryptedKDCSessionKey))
+	fmt.Printf("[UserA]       Decrypted kdcSessionKey : %v\n", Hexify(kekUserADecryptedKDCSessionKey))
+	fmt.Printf("[UserB]       Decrypted kdcSessionKey : %v\n", Hexify(kekUserBDecryptedKDCSessionKey))
 
 	// Finally, we need to check if the decrypted KDC session keys are the same.
 	// If they are, then the KDC session key is successfully distributed to both users.
 	if bytes.Compare(kekUserADecryptedKDCSessionKey, kekUserBDecryptedKDCSessionKey) == 0 {
-		fmt.Println("** KDC session key successfully distributed to both users **")
+		fmt.Println("[UserA ↔ UserB] ** KDC session key successfully distributed to both users **")
 	} else {
 		fmt.Println("** KDC session key distribution failed **")
 	}
