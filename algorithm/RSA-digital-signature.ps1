@@ -69,17 +69,17 @@ Write-Host "[Sender] Message         : $decodedMessage"
 Write-Host "[Sender] Message (bytes) : $($message | ForEach-Object { $_.ToString("X2") })"
 
 [xml]$privateKeyXmlObject = $privateKeyXml
-Write-Host "[Private Key] Modulus    : $($privateKeyXmlObject.RSAKeyValue.Modulus)"
-Write-Host "[Private Key] Exponent   : $($privateKeyXmlObject.RSAKeyValue.Exponent)"
-Write-Host "[Private Key] P          : $($privateKeyXmlObject.RSAKeyValue.P)"
+Write-Host "[Private Key] Modulus    : $($privateKeyXmlObject.RSAKeyValue.Modulus)"     # Modulus is the product of two prime numbers
+Write-Host "[Private Key] Exponent   : $($privateKeyXmlObject.RSAKeyValue.Exponent)"    # Exponent is the public key
+Write-Host "[Private Key] P          : $($privateKeyXmlObject.RSAKeyValue.P)"           # P and Q are the prime factors
 Write-Host "[Private Key] Q          : $($privateKeyXmlObject.RSAKeyValue.Q)"
-Write-Host "[Private Key] DP         : $($privateKeyXmlObject.RSAKeyValue.DP)"
+Write-Host "[Private Key] DP         : $($privateKeyXmlObject.RSAKeyValue.DP)"          # DP and DQ are the private key's prime factors
 Write-Host "[Private Key] DQ         : $($privateKeyXmlObject.RSAKeyValue.DQ)"
-Write-Host "[Private Key] InverseQ   : $($privateKeyXmlObject.RSAKeyValue.InverseQ)"
-Write-Host "[Private Key] D          : $($privateKeyXmlObject.RSAKeyValue.D)"
+Write-Host "[Private Key] InverseQ   : $($privateKeyXmlObject.RSAKeyValue.InverseQ)"    # InverseQ is the Chinese Remainder Theorem coefficient
+Write-Host "[Private Key] D          : $($privateKeyXmlObject.RSAKeyValue.D)"           # D is the known as the private exponent
 
 [xml]$publicKeyXmlObject = $publicKeyXml
-Write-Host "[Public Key]  Modulus    : $($publicKeyXmlObject.RSAKeyValue.Modulus)"
+Write-Host "[Public Key]  Modulus    : $($publicKeyXmlObject.RSAKeyValue.Modulus)"      # Modulus is the product of two prime numbers
 Write-Host "[Public Key]  Exponent   : $($publicKeyXmlObject.RSAKeyValue.Exponent)"
 
 # Sign the message with the private key
