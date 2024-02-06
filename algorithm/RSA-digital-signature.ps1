@@ -66,7 +66,7 @@ $message = [System.Text.Encoding]::UTF8.GetBytes("OwO Digital Signature (with RS
 
 $decodedMessage = [System.Text.Encoding]::UTF8.GetString($message)
 Write-Host "[Sender] Message         : $decodedMessage"
-Write-Host "[Sender] Message (bytes) : $message"
+Write-Host "[Sender] Message (bytes) : $($message | ForEach-Object { $_.ToString("X2") })"
 
 [xml]$privateKeyXmlObject = $privateKeyXml
 Write-Host "[Private Key] Modulus    : $($privateKeyXmlObject.RSAKeyValue.Modulus)"
